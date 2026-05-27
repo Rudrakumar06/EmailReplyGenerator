@@ -10,7 +10,7 @@ import com.email.ReplyGenerator.Entity.EmailRequest;
 import com.email.ReplyGenerator.Service.EmailService;
 
 import lombok.AllArgsConstructor;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/email")
 @AllArgsConstructor
