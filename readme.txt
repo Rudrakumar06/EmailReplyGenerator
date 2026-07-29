@@ -31,7 +31,13 @@ Using the Extension Only
 5. Open Gmail and verify the extension is active.
 
 The extension works by injecting UI into Gmail. If it depends on a backend service, that backend must be running separately for full functionality.
-
+Backend Gemini API Key
+----------------------
+If you use the backend service for reply generation, configure the Gemini API key in the backend application:
+1. Open the `ReplyGenerator/ReplyGenerator` project.
+2. Set the Gemini API key in your environment or backend configuration.
+   - Example environment variable: `GEMINI_API_KEY=your_api_key_here`
+3. If the backend uses `application.properties`, add the corresponding property or ensure the environment variable is available at runtime.
 Repository Structure
 --------------------
 - `Emailgenerator-frontend/email-generator-frontend/`: React frontend application with `package.json`, source code, and build configuration.
