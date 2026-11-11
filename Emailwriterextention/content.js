@@ -11,8 +11,8 @@ function findComposeToolbar() {
         if (toolbar) {
             return toolbar;
         }
-        return null;
     }
+    return null;
 }
 function createAIbutton() {
     const button = document.createElement('div');
@@ -57,7 +57,7 @@ function injectButton() {
               button.disabled = true;
               const emailcontent = getEmailContent();
 
-              const response = await fetch("http://localhost:8080/api/email/generate", {
+              const response = await fetch("https://emailreplygenerator-7y85.onrender.com/api/email/generate", {
                 method: "POST",
                 headers: {  "Content-Type": "application/json" },
                 body: JSON.stringify({ emailContent: emailcontent,
@@ -66,7 +66,7 @@ function injectButton() {
               });
 
               if (!response.ok) {
-                throw new Error("Network response was not ok");
+                throw new Error("HTTP error " + response.status);
               }
               const generatedReply = await response.text();
               const composeBox = document.querySelector(
@@ -74,9 +74,12 @@ function injectButton() {
                 if (composeBox) {
                     composeBox.focus();
                     document.execCommand("insertText", false, generatedReply);
+                } else {
+                    console.error("Compose box not found");
                 }
             }catch(error){
-
+              console.error("AI Reply error:", error);
+              alert("AI Reply error: " + error.message);
             }
             finally{
                 button.innerText = "AI Reply";
