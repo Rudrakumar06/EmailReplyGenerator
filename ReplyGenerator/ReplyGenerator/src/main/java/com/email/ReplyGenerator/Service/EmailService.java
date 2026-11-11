@@ -38,7 +38,7 @@ public class EmailService {
 
       
         String response = webClient.post()
-                .uri("/v1beta/models/gemini-2.5-flash:generateContent")
+                .uri("/v1beta/models/gemini-3.5-flash:generateContent")
                 .header("x-goog-api-key", apiKey)
                 .header("Content-Type", "application/json")
                 .bodyValue(jsonBody)
