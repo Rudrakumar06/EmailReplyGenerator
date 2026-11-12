@@ -1,179 +1,137 @@
 # Email Reply Generator
 
-An intelligent email reply assistant that leverages AI to help compose professional email responses quickly and efficiently. Features a Java Spring Boot backend, modern React frontend, and Chrome extension for seamless Gmail integration.
+An AI-powered email reply assistant that integrates directly into Gmail as a Chrome Extension, powered by a Java Spring Boot backend deployed on Render. Uses Google's Gemini AI to generate contextual, professional email replies in seconds.
+
+🌐 **Live Backend API**: `https://emailreplygenerator-7y85.onrender.com`
+
+---
 
 ## 📋 Table of Contents
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+  - [Backend Setup](#backend-setup-local--docker)
   - [Chrome Extension Setup](#chrome-extension-setup)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- [Live Deployment](#-live-deployment-render)
+- [License](#-license)
+
+---
 
 ## ✨ Features
 
-- **AI-Powered Reply Generation**: Generate contextual email replies with a single click
-- **Gmail Integration**: Seamless Chrome extension for Gmail
-- **Web Interface**: User-friendly React application
-- **Professional Responses**: Generates polished, professional email content
-- **RESTful API**: Robust Spring Boot backend for processing requests
+- **Gmail Integration**: One-click "AI Reply" button injected directly into Gmail's compose window.
+- **AI-Powered Generation**: Generates contextual, professional email replies using Google's Gemini AI.
+- **Live Cloud Backend**: Spring Boot service containerized with Docker and deployed on Render.
+- **RESTful API**: Fast, asynchronous WebFlux client for external API communication.
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Backend
+- **Java 21**
+- **Spring Boot 3.x** - Web framework
+- **Spring WebFlux** - Reactive HTTP client (`WebClient`)
+- **Docker** - Containerization
+- **Render** - Cloud hosting platform
+- **Google Gemini API** (`gemini-3.5-flash`) - AI reply generation
 
-- **Java 11+**
-- **Spring Boot** - Web framework
-- **Spring WebClient** - HTTP client for API calls
-- **Maven** - Build tool
+### Browser Extension
+- **Manifest V3**
+- **Vanilla JavaScript** (DOM manipulation & MutationObserver)
+- **Chrome Extension API**
 
-### Frontend
-
-- **React 18+**
-- **Vite** - Build tool
-- **JavaScript ES6+**
-
-### Chrome Extension
-
-- **Vanilla JavaScript**
-- **Chrome APIs**
+---
 
 ## 📁 Project Structure
 
 ```
 EmailReplyGenerator/
-├── ReplyGenerator/                 # Spring Boot backend
+├── ReplyGenerator/
 │   └── ReplyGenerator/
 │       ├── src/
-│       │   ├── main/java/          # Backend source code
-│       │   └── resources/          # Configuration files
-│       └── pom.xml                 # Maven configuration
-├── Emailgenerator-frontend/        # React frontend
-│   └── email-generator-frontend/
-│       ├── src/                    # React components
-│       ├── package.json            # Dependencies
-│       └── vite.config.js          # Vite configuration
-└── Emailwriterextention/           # Chrome extension
-    ├── manifest.json               # Extension configuration
-    ├── content.js                  # Extension script
-    └── content.css                 # Extension styles
+│       │   ├── main/java/com/email/ReplyGenerator/
+│       │   │   ├── Controller/      # REST Endpoints
+│       │   │   ├── Service/         # Gemini API integration logic
+│       │   │   ├── Entity/          # Request/Response models
+│       │   │   └── config/          # WebClient & CORS configuration
+│       │   └── resources/
+│       │       └── application.properties
+│       └── pom.xml                  # Maven dependencies
+├── Emailwriterextention/            # Chrome Extension
+│   ├── manifest.json                # Extension configuration (Manifest V3)
+│   ├── content.js                   # Gmail DOM observer & API fetch
+│   └── content.css                  # Extension styling
+└── Dockerfile                       # Multi-stage Docker build for Render
 ```
+
+---
 
 ## 📦 Prerequisites
 
-- **Java 11 or higher**
-- **Node.js 16+ and npm**
-- **Maven 3.6+**
-- **Google Chrome browser** (for extension)
+- **Java 21** & **Maven 3.8+** (for local backend development)
+- **Google Chrome** browser (for running the extension)
+- **Google Gemini API Key** ([Get one from Google AI Studio](https://aistudio.google.com/))
+
+---
 
 ## 🚀 Getting Started
 
-### Backend Setup
+### Backend Setup (Local)
 
 1. Navigate to the backend directory:
-
    ```bash
    cd ReplyGenerator/ReplyGenerator
    ```
 
-2. Configure the application properties:
-
+2. Set your Gemini API key as an environment variable:
    ```bash
-   # Edit src/main/resources/application.properties
-   # Update API endpoints and other configurations as needed
+   # Windows PowerShell
+   $env:GEMINI_API_KEY="your_gemini_api_key"
+
+   # macOS / Linux
+   export GEMINI_API_KEY="your_gemini_api_key"
    ```
 
-3. Build the project:
-
+3. Run the Spring Boot application:
    ```bash
-   mvn clean install
+   ./mvnw spring-boot:run
    ```
+   The backend will start at `http://localhost:8080`.
 
-4. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-   The backend will start on `http://localhost:8080` (or your configured port)
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-
-   ```bash
-   cd Emailgenerator-frontend/email-generator-frontend
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The frontend will be available at `http://localhost:5173` (Vite default)
-
-4. Build for production:
-   ```bash
-   npm run build
-   ```
+---
 
 ### Chrome Extension Setup
 
-1. Navigate to the extension directory:
+1. Open Google Chrome and go to `chrome://extensions/`.
+2. Enable **Developer mode** (toggle in the top-right corner).
+3. Click **Load unpacked**.
+4. Select the `Emailwriterextention` folder from this repository.
+5. Open [Gmail](https://mail.google.com), open or compose an email, and click the **AI Reply** button!
 
-   ```bash
-   cd Emailwriterextention
-   ```
+---
 
-2. Load the extension in Chrome:
-   - Open `chrome://extensions/`
-   - Enable **Developer mode** (toggle in top right)
-   - Click **Load unpacked**
-   - Select the `Emailwriterextention` folder
+## ☁️ Live Deployment (Render)
 
-3. The extension is now ready to use in Gmail
+The backend is deployed as a Dockerized Web Service on Render.
 
-## 💻 Usage
+- **Base Endpoint**: `POST https://emailreplygenerator-7y85.onrender.com/api/email/generate`
+- **Request Body**:
+  ```json
+  {
+    "emailContent": "Thanks for reaching out! Let me know when you're available for a call.",
+    "tone": "professional"
+  }
+  ```
+- **Response**: String containing the generated reply text.
 
-### Via Web Interface
+> ℹ️ *Note: Render's free tier sleeps after 15 minutes of inactivity. If the first request takes ~30 seconds, it is waking up the container.*
 
-1. Open the React frontend at `http://localhost:5173`
-2. Enter your email text or context
-3. Click to generate a reply
-4. Copy or customize the generated response
-
-### Via Chrome Extension
-
-1. Open Gmail
-2. Click the **Email Reply Generator** extension icon
-3. Compose or view an email
-4. Use the extension interface to generate replies
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/YourFeature`
-3. Commit changes: `git commit -m 'Add YourFeature'`
-4. Push to branch: `git push origin feature/YourFeature`
-5. Submit a Pull Request
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 Support
-
-For issues, questions, or suggestions, please open an issue on GitHub or contact the maintainers.
+This project is licensed under the MIT License.
