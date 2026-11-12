@@ -3,48 +3,80 @@ EmailReplyGenerator
 
 Overview
 --------
-This repository contains two separate user-facing components:
-- `Emailgenerator-frontend/email-generator-frontend`: the React frontend application.
-- `Emailwriterextention`: the Gmail browser extension files.
+An AI-powered email reply assistant that integrates directly into Gmail as a
+Chrome Extension, powered by a Java Spring Boot backend deployed on Render.
 
-Each component can be used independently:
-- The frontend is a standalone UI for generating email replies when run with its own development server.
-- The extension is a browser integration that injects reply functionality directly into Gmail.
+  Live Backend API: https://emailreplygenerator-7y85.onrender.com
 
-Using the Frontend Only
------------------------
-1. Open `Emailgenerator-frontend/email-generator-frontend`.
-2. Install dependencies:
-   - Run `npm install` in that folder.
-3. Start the frontend app:
-   - Run `npm run dev`.
-4. Open the URL shown by Vite (usually `http://localhost:5173`).
+Components
+----------
+- ReplyGenerator/: Java Spring Boot backend service (deployed on Render).
+- Emailwriterextention/: Chrome Extension (Manifest V3) that injects an
+  "AI Reply" button directly into Gmail's compose window.
 
-This frontend is intended as the UI layer only. If the backend API is not running, it may not be able to generate replies automatically.
+The extension calls the backend REST API to generate professional email replies
+using Google's Gemini AI (gemini-3.5-flash).
 
-Using the Extension Only
-------------------------
-1. Open the `Emailwriterextention` folder.
-2. In your browser, open the extensions or add-ons page.
-3. Enable developer mode.
-4. Load the extension as an unpacked extension from the `Emailwriterextention` folder.
-5. Open Gmail and verify the extension is active.
-
-The extension works by injecting UI into Gmail. If it depends on a backend service, that backend must be running separately for full functionality.
-Backend Gemini API Key
-----------------------
-If you use the backend service for reply generation, configure the Gemini API key in the backend application:
-1. Open the `ReplyGenerator/ReplyGenerator` project.
-2. Set the Gemini API key in your environment or backend configuration.
-   - Example environment variable: `GEMINI_API_KEY=your_api_key_here`
-3. If the backend uses `application.properties`, add the corresponding property or ensure the environment variable is available at runtime.
 Repository Structure
 --------------------
-- `Emailgenerator-frontend/email-generator-frontend/`: React frontend application with `package.json`, source code, and build configuration.
-- `Emailwriterextention/`: Browser extension files, including `manifest.json`, `content.js`, and `content.css`.
-- `ReplyGenerator/`: Backend service (Java Spring application).
+- ReplyGenerator/ReplyGenerator/: Java Spring Boot application
+    - src/main/java/com/email/ReplyGenerator/Controller/EmailController.java
+    - src/main/java/com/email/ReplyGenerator/Service/EmailService.java
+    - src/main/java/com/email/ReplyGenerator/Entity/EmailRequest.java
+    - src/main/java/com/email/ReplyGenerator/config/WebClientConfig.java
+    - src/main/resources/application.properties
+    - pom.xml
+- Emailwriterextention/: Chrome Extension
+    - manifest.json (Manifest V3)
+    - content.js (Gmail DOM observer + API fetch)
+    - content.css (Extension styles)
+- Dockerfile: Multi-stage Docker build for Render deployment.
+
+Backend Setup
+-------------
+1. Open the ReplyGenerator/ReplyGenerator folder.
+2. Set your Gemini API key as an environment variable:
+
+     # Windows PowerShell
+     $env:GEMINI_API_KEY="your_gemini_api_key"
+
+     # macOS / Linux
+     export GEMINI_API_KEY="your_gemini_api_key"
+
+3. Build and run:
+
+     ./mvnw spring-boot:run
+
+   The backend starts on http://localhost:8080.
+
+Chrome Extension Setup
+----------------------
+1. Open Google Chrome and go to chrome://extensions/.
+2. Enable Developer mode (toggle in the top-right corner).
+3. Click "Load unpacked".
+4. Select the Emailwriterextention folder from this repository.
+5. Open Gmail, open or compose an email, and click the "AI Reply" button.
+
+Live Deployment (Render)
+------------------------
+The backend is deployed as a Dockerized Web Service on Render.
+
+  Endpoint: POST https://emailreplygenerator-7y85.onrender.com/api/email/generate
+
+  Request body:
+  {
+    "emailContent": "Thanks for reaching out!",
+    "tone": "professional"
+  }
+
+  Response: Generated reply text.
+
+Note: Render's free tier sleeps after 15 minutes of inactivity. If the first
+request takes ~30 seconds, the container is waking up.
 
 Notes
 -----
-- You can use just the frontend or just the extension, depending on your needs.
-- For full end-to-end behavior, both the frontend and extension may require the backend to be available.
+- The extension requires the backend to be running for full functionality.
+- The backend requires a valid Google Gemini API key.
+- The frontend (React) folder has been removed; only the extension and backend
+  remain in this repository.
